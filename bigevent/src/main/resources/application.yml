@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/big_event
+    username: root
+    password: admin123
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true   #开启驼峰映射
+  mapper-locations: classpath:mapper/*.xml
+
+logging:
+  level:
+    # 打印 Mapper 接口的日志
+    org.example.mapper: DEBUG
+    # 打印 MyBatis 核心日志（可选）
+    org.apache.ibatis: DEBUG
