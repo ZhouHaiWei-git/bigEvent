@@ -9,12 +9,14 @@ import org.example.utils.Md5Util;
 import org.example.utils.ThreadLocalUtil;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Validated
@@ -22,21 +24,22 @@ import java.util.Map;
 public class UserController {
 	@Autowired
 	private IUserService userService;
-
+    @Autowired
+	private StringRedisTemplate stringRedisTemplate;
 	@PostMapping("/register")
 	public Result register(@Pattern(regexp = "^[a-zA-Z0-9_-]{5,16}$", message = "用户名格式错误") String username, @Pattern(regexp = "^[a-zA-Z0-9_-]{6,16}$", message = "密码格式错误") String password) {
 
 		User user = userService.findByUserName(username);
 		if (user == null) {
 			userService.register(username, password);
-			return Result.success();
+			return Result.success("注册成功");
 		} else {
 			return Result.error("用户名已经被占用");
 		}
 	}
 
 	@PostMapping("/login")
-	public Result login(@Pattern(regexp = "^[a-zA-Z0-9_-]{5,16}$", message = "用户名格式错误") String username, @Pattern(regexp = "^[a-zA-Z0-9_-]{6,16}$", message = "密码格式错误") String password) {
+	public Result login(@Pattern(regexp = "^[a-zA-Z0-9_-]{5,16}$", message = "用户名格式错误") String username, @Pattern(regexp = "^[a-zA-Z0-9_-]{4,16}$", message = "密码格式错误") String password) {
 		User user = userService.findByUserName(username);
 		if (user == null) {
 			return Result.error("用户名不存在");
@@ -45,6 +48,8 @@ public class UserController {
 				Map<String, Object> claims = new HashMap<>();
 				claims.put("id", user.getId());
 				claims.put("username", user.getUsername());
+				String token = JwtUtil.genToken(claims);
+				stringRedisTemplate.opsForValue().set("token:" + token,token,12, TimeUnit.HOURS);
 				return Result.success(JwtUtil.genToken( claims));
 			}
 
@@ -71,7 +76,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/updatePwd")
-	public Result updatePwd(@RequestBody Map<String, String> params) {
+	public Result updatePwd(@RequestBody Map<String, String> params,@RequestHeader("Authorization") String token) {
       //1 校验参数
 		String oldPwd = params.get("oldPwd");
 		String newPwd = params.get("newPwd");
@@ -84,6 +89,7 @@ public class UserController {
 		if(!Md5Util.getMD5String(oldPwd).equals(user.getPassword()))
 			return Result.error("旧密码错误");
 		userService.updatePwd(user.getId(),Md5Util.getMD5String(newPwd));
+		stringRedisTemplate.delete("token:" + token);
 		return Result.success();
 	}
 }

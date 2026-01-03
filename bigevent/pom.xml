@@ -75,5 +75,21 @@
       <artifactId>pagehelper-spring-boot-starter</artifactId>
       <version>1.4.6</version>
     </dependency>
+
+    <!--redis坐标-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <!--打包插件-->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>3.1.3</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

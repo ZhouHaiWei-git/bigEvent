@@ -20,3 +20,5 @@ logging:
     org.example.mapper: DEBUG
     # 打印 MyBatis 核心日志（可选）
     org.apache.ibatis: DEBUG
+server:
+  port: 8081
