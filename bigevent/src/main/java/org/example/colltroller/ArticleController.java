@@ -1,5 +1,6 @@
 package org.example.colltroller;
 
+import jakarta.validation.constraints.NotNull;
 import org.example.pojo.Article;
 import org.example.pojo.PageBean;
 import org.example.pojo.Result;
@@ -23,5 +24,17 @@ public class ArticleController {
     public Result<PageBean<Article>> list(Integer pageNum, Integer pageSize, Integer categoryId,String  state){
 		PageBean<Article> pageBean = articleService.list(pageNum, pageSize, categoryId, state);
 		return Result.success(pageBean);
+	}
+
+	@PutMapping
+	public Result update(@RequestBody @Validated(Article.Update.class) Article article){
+		articleService.update(article);
+		return Result.success();
+	}
+
+	@DeleteMapping
+	public Result delete(@RequestParam @NotNull Integer id) {
+		articleService.delete(id);
+		return Result.success();
 	}
 }

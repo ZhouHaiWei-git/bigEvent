@@ -35,4 +35,18 @@ public class ArticleService implements IArticleService {
 		pageBean.setItems(page.getResult());
 		return pageBean;
 	}
+
+	@Override
+	public void delete(Integer id) {
+		Article article = articleMapper.findById(id);
+		if (article == null) {
+			throw new RuntimeException("文章不存在");
+		}
+		articleMapper.delete(id);
+	}
+
+	@Override
+	public void update(Article article) {
+		articleMapper.update(article);
+	}
 }

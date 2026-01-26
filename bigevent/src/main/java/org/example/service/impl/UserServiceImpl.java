@@ -37,6 +37,12 @@ public class UserServiceImpl implements IUserService {
         userMapper.updateAvatar(user.getId(),avatarUrl);
     }
 
+	@Override
+	public void updateAvatarFile(Long fileId) {
+		User user = (User) ThreadLocalUtil.get();
+		userMapper.updateAvatarFileId(user.getId(), fileId);
+	}
+
     @Override
     public void updatePwd(@NonNull Integer id, String md5Pwd) {
         userMapper.updatePwd(id,md5Pwd);

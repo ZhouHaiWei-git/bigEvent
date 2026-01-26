@@ -1,8 +1,7 @@
 package org.example.mapper;
 
 import lombok.NonNull;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.*;
 import org.example.pojo.Article;
 
 import java.util.List;
@@ -16,4 +15,13 @@ public interface ArticleMapper {
 	void add(Article article);
 
 	List<Article> list(@NonNull Integer userId, Integer categoryId, String state);
+
+	@Select("select * from article where id=#{id}")
+	Article findById(Integer id);
+
+	@Delete("delete from article where id=#{id}")
+	void delete(Integer id);
+
+	@Update("update article set title=#{title},content=#{content},cover_img=#{coverImg},state=#{state},category_id=#{categoryId},update_time=now() where id=#{id}")
+	void update(Article article);
 }

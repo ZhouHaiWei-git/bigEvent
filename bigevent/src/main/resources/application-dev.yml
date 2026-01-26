@@ -22,3 +22,7 @@ logging:
     org.apache.ibatis: DEBUG
 server:
   port: 8080
+
+file:
+  storage:
+    root: ./fileDownload

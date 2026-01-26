@@ -40,7 +40,7 @@ public class CategoryController {
 	}
 
 	@DeleteMapping
-	public Result delete(@RequestParam @Pattern(regexp = "^\\d+$", message = "id只能是正整数") Integer id) {
+	public Result delete(@RequestParam @NotNull Integer id) {
 		categoryService.delete(id);
 		return Result.success();
 	}

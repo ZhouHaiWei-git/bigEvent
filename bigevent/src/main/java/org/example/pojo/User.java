@@ -23,6 +23,7 @@ public class User {
     @Email
     private String email;//邮箱
     private String userPic;//用户头像地址
+    private Long avatarFileId;//头像文件ID
     private LocalDateTime createTime;//创建时间
     private LocalDateTime updateTime;//更新时间
 }

@@ -13,9 +13,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.time.Instant;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -60,6 +63,15 @@ public class UserController {
 	@GetMapping("/userInfo")
 	public Result<User> getUserInfo() {
 		User user = (User)ThreadLocalUtil.get();
+		if (user != null && user.getAvatarFileId() != null) {
+			Long fileId = user.getAvatarFileId();
+			long expireSeconds = 86400L * 30;
+			String fileToken = UUID.randomUUID().toString().replace("-", "");
+			long expAt = Instant.now().getEpochSecond() + expireSeconds;
+			stringRedisTemplate.opsForValue().set("file:token:" + fileToken, fileId + ":" + expAt, expireSeconds, TimeUnit.SECONDS);
+			String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+			user.setUserPic(baseUrl + "/files/" + fileId + "/preview?fileToken=" + fileToken);
+		}
 		return Result.success(user);
 	}
 
@@ -72,6 +84,12 @@ public class UserController {
 	@PatchMapping("/updateAvatar")
 	public Result updateAvatar(@RequestParam @URL String avatarUrl) {
 		userService.updateAvatar(avatarUrl);
+		return Result.success();
+	}
+
+	@PatchMapping("/updateAvatarFile")
+	public Result updateAvatarFile(@RequestParam Long fileId) {
+		userService.updateAvatarFile(fileId);
 		return Result.success();
 	}
 

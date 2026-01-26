@@ -26,6 +26,10 @@ public interface UserMapper {
     @Update("update user set user_pic = #{avatarUrl},update_time = now() where id = #{id}")
     void updateAvatar(@NonNull Integer id, String avatarUrl);
 
+	//更新用户头像文件ID
+	@Update("update user set avatar_file_id = #{fileId},update_time = now() where id = #{id}")
+	void updateAvatarFileId(@NonNull Integer id, Long fileId);
+
     //更新用户密码
     @Update("update user set password = #{md5Pwd},update_time = now() where id = #{id}")
     void updatePwd(@NonNull Integer id, String md5Pwd);

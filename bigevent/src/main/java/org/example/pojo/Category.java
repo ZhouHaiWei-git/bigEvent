@@ -29,6 +29,5 @@ public class Category {
 
     }
     public interface Update extends Default{
-
     }
 }

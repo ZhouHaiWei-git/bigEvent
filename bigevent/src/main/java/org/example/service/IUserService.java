@@ -11,5 +11,7 @@ public interface IUserService {
 
      void updateAvatar(String avatarUrl);
 
+     void updateAvatarFile(Long fileId);
+
      void updatePwd(@NonNull Integer id, String md5String);
 }
